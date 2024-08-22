@@ -59,8 +59,8 @@ jobs:
           python3 ./scripts/all_mnemonic_csv_generator.py  ./ ./outputs/benign_pe_files_general_mnemonic.csv
           cat ./outputs/benign_pe_files_general_mnemonic.csv
   
-  download-from-artifactory:
-    name: Download from artifactory
+  upload-to-artifactory:
+    name: Upload to artifactory
     needs: run-csv-general-mnemonic-generator
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -73,7 +73,7 @@ jobs:
 
   deploy-to-s3:
     name: Deploy to S3
-    needs: download-from-artifactory
+    needs: upload-to-artifactory
     runs-on: ubuntu-latest
     timeout-minutes: 20
     environment: aws_malware_analysis
