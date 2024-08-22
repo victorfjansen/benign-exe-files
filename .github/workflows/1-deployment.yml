@@ -6,8 +6,8 @@ on:
       - main
 
 jobs:
-  run-csv-most-common-generator:
-    name: Run Most Common OPCODES CSV Generator
+  run-csv-mnemonic-generator:
+    name: Run OPCODES CSV Generator
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -29,65 +29,25 @@ jobs:
           python3 ./scripts/most_common_mnemonic_csv_generator.py  ./ ./outputs/benign_pe_files_most_common_mnemonic.csv
           cat ./outputs/benign_pe_files_most_common_mnemonic.csv
 
-  run-csv-general-mnemonic-generator:
-    name: Run GENERAL OPCODES CSV Generator
-    runs-on: ubuntu-latest
-    needs: run-csv-most-common-generator
-    timeout-minutes: 20
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-    
-      - name: Set up python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.12'
-      
-      - name: Install dependencies
-        run: |
-          python3 -m pip install --upgrade pip
-          pip install capstone pefile
-
-      - name: Disassemble and generate most common MNEMONIC CODES CSV
+      - name: Disassemble and generate GENERAL MNEMONIC CODES CSV
         run: |
           python3 ./scripts/all_mnemonic_csv_generator.py  ./ ./outputs/benign_pe_files_general_mnemonic.csv
           cat ./outputs/benign_pe_files_general_mnemonic.csv
-  
-  upload-to-artifactory:
-    name: Upload to artifactory
-    needs: run-csv-general-mnemonic-generator
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
 
       - name: Saving CSV in artifactory
         uses: actions/upload-artifact@v3
         with:
           name: MalwareAnalysis_benign_files
           path: ./outputs/
-      
-      - name: RUN
-        run: |
-          ls
-          cat ./outputs/benign_pe_files_general_mnemonic.csv
-          cat ./outputs/benign_pe_files_most_common_mnemonic.csv
-
+  
   deploy-to-s3:
     name: Deploy to S3
-    needs: upload-to-artifactory
+    needs: run-csv-mnemonic-generator
     runs-on: ubuntu-latest
     timeout-minutes: 20
     environment: aws_malware_analysis
     steps:
       - uses: actions/checkout@v4
-
-      - name: RUN
-        run: |
-          ls
-          cat ./outputs/benign_pe_files_general_mnemonic.csv
-          cat ./outputs/benign_pe_files_most_common_mnemonic.csv
 
       - name: Download benign Files
         uses: actions/download-artifact@v3
