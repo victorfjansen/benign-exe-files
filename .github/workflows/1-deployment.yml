@@ -29,3 +29,33 @@ jobs:
           python3 ./scripts/mnemonic_csv_generator.py  ./ ./outputs/benign_pe_files.csv
           cat ./outputs/benign_pe_files.csv
           
+      - name: Saving CSV in artifactory
+        uses: actions/upload-artifact@v3
+        with:
+          name: MalwareAnalysis_benign_files
+          path: ./outputs/
+  
+  deploy-to-s3:
+    name: Deploy to S3
+    needs: run-csv-generator
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: aws_malware_analysis
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download benign Files
+        uses: actions/download-artifact@v3
+        with:
+          name: MalwareAnalysis_benign_files
+          path: ./outputs/
+
+      - name: Deploy to S3
+        uses: jakejarvis/s3-sync-action@master
+        with:
+          args: --acl public-read --follow-symlinks --delete
+        env:
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          SOURCE_DIR: 'dist'
