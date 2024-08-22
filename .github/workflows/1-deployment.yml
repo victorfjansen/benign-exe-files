@@ -28,12 +28,6 @@ jobs:
         run: |
           python3 ./scripts/most_common_mnemonic_csv_generator.py  ./ ./outputs/benign_pe_files_most_common_mnemonic.csv
           cat ./outputs/benign_pe_files_most_common_mnemonic.csv
-          
-      - name: Saving CSV in artifactory
-        uses: actions/upload-artifact@v3
-        with:
-          name: MalwareAnalysis_benign_files
-          path: ./outputs/
 
   run-csv-general-mnemonic-generator:
     name: Run GENERAL OPCODES CSV Generator
