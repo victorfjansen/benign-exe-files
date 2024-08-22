@@ -26,4 +26,6 @@ jobs:
 
       - name: Disassemble and generate CSV
         run: |
-          ls
+          python3 ./scripts/mnemonic_csv_generator.py ./outputs/benign_pe_files.csv
+          cat ./outputs/benign_pe_fiiles.csv
+          
