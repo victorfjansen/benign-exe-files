@@ -59,6 +59,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
+      - name:
+        uses: actions/checkout@v4
+        
       - name: Saving CSV in artifactory
         uses: actions/upload-artifact@v3
         with:

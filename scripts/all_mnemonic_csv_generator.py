@@ -40,15 +40,6 @@ def disassemble_file(file_path):
     
     return filtered_disassembly
 
-def get_locally_most_common_sequences(disassembly):
-    filtered_disassembly = [] 
-    for instruction in disassembly:
-        instruction_mnemonic = instruction.split("\t")[0]
-        if any(item[0] == instruction_mnemonic for item in mnemonic_counter.most_common(31)):
-            filtered_disassembly.append(instruction_mnemonic)
-    
-    return filtered_disassembly
-
 def process_directory(input_directory, csv_output_path):
     # Open the CSV file for writing
     with open(csv_output_path, "w", newline="") as csvfile:
