@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  run-csv-generator:
+  run-csv-most-common-generator:
     name: Run CSV Generator
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -24,9 +24,9 @@ jobs:
           python3 -m pip install --upgrade pip
           pip install capstone pefile
 
-      - name: Disassemble and generate CSV
+      - name: Disassemble and generate most common MNEMONIC CODES CSV
         run: |
-          python3 ./scripts/mnemonic_csv_generator.py  ./ ./outputs/benign_pe_files_most_common_mnemonic.csv
+          python3 ./scripts/most_common_mnemonic_csv_generator.py  ./ ./outputs/benign_pe_files_most_common_mnemonic.csv
           cat ./outputs/benign_pe_files_most_common_mnemonic.csv
           
       - name: Saving CSV in artifactory
@@ -34,10 +34,46 @@ jobs:
         with:
           name: MalwareAnalysis_benign_files
           path: ./outputs/
+
+  run-csv-general-mnemonic-generator:
+    name: Run CSV Generator
+    runs-on: ubuntu-latest
+    needs: run-csv-most-common-generator
+    timeout-minutes: 20
+    steps:
+      - name:
+        uses: actions/checkout@v4
+    
+      - name: Set up python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+      
+      - name: Install dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install capstone pefile
+
+      - name: Disassemble and generate most common MNEMONIC CODES CSV
+        run: |
+          python3 ./scripts/all_mnemonic_csv_generator.py  ./ ./outputs/benign_pe_files_general_mnemonic.csv
+          cat ./outputs/benign_pe_files_general_mnemonic.csv
   
+  download-from-artifactory:
+    name: Download from artifactory
+    needs: run-csv-general-mnemonic-generator
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Saving CSV in artifactory
+        uses: actions/upload-artifact@v3
+        with:
+          name: MalwareAnalysis_benign_files
+          path: ./outputs/
+
   deploy-to-s3:
     name: Deploy to S3
-    needs: run-csv-generator
+    needs: download-from-artifactory
     runs-on: ubuntu-latest
     timeout-minutes: 20
     environment: aws_malware_analysis
