@@ -1,0 +1,29 @@
+name: Create CSV from Benign Files
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  run-csv-generator:
+    name: Run CSV Generator
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name:
+        uses: actions/checkout@v4
+    
+      - name: Set up python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+      
+      - name: Install dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install capstone pefile
+
+      - name: Disassemble and generate CSV
+        run: |
+          ls
