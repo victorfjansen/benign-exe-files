@@ -26,8 +26,8 @@ jobs:
 
       - name: Disassemble and generate CSV
         run: |
-          python3 ./scripts/mnemonic_csv_generator.py  ./ ./outputs/benign_pe_files.csv
-          cat ./outputs/benign_pe_files.csv
+          python3 ./scripts/mnemonic_csv_generator.py  ./ ./outputs/benign_pe_files_mnemonic.csv
+          cat ./outputs/benign_pe_files_mnemonic.csv
           
       - name: Saving CSV in artifactory
         uses: actions/upload-artifact@v3
