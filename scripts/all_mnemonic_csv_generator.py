@@ -44,7 +44,7 @@ def process_directory(input_directory, csv_output_path):
     # Open the CSV file for writing
     with open(csv_output_path, "w", newline="") as csvfile:
         csvwriter = csv.writer(csvfile)
-        csvwriter.writerow(["type", "opcodes"])  # Write CSV header
+        csvwriter.writerow(["type", "opcodes", "file_name"])  # Write CSV header with the new column
 
         # Process each .exe or .bin file in the input directory
         for filename in os.listdir(input_directory):
@@ -55,8 +55,9 @@ def process_directory(input_directory, csv_output_path):
                 disassembled_code = disassemble_file(input_path)
                 opcode_sequence = " ".join(disassembled_code)
                 
-                # Write the row to the CSV
-                csvwriter.writerow(["non_malware", opcode_sequence])
+                # Write the row to the CSV, including the file name
+                if opcode_sequence:
+                    csvwriter.writerow(["non_malware", opcode_sequence, filename])
                 print(f"CSV row added for {filename}")
 
 if __name__ == "__main__":
