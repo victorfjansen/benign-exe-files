@@ -48,7 +48,7 @@ def process_directory(input_directory, csv_output_path):
 
         # Process each .exe or .bin file in the input directory
         for filename in os.listdir(input_directory):
-            if filename.endswith((".exe", ".bin")):
+            if os.path.splitext(filename)[1]:
                 input_path = os.path.join(input_directory, filename)
                 
                 print(f"Processing {filename}...")
@@ -58,7 +58,7 @@ def process_directory(input_directory, csv_output_path):
                 # Write the row to the CSV, including the file name
                 if opcode_sequence:
                     csvwriter.writerow(["non_malware", opcode_sequence, filename])
-                print(f"CSV row added for {filename}")
+                    print(f"CSV row added for {filename}")
 
 if __name__ == "__main__":
     import sys

@@ -55,7 +55,7 @@ def process_directory(input_directory, csv_output_path):
         csvwriter.writerow(["type", "opcodes", "file_name"])  # Write CSV header with the new column
 
         for filename in os.listdir(input_directory):
-            if filename.endswith((".exe", ".bin")):
+            if os.path.splitext(filename)[1]:
                 input_path = os.path.join(input_directory, filename)
                 
                 print(f"Processing {filename}...")
